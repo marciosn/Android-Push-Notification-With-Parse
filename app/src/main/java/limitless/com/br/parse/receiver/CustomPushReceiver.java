@@ -88,7 +88,7 @@ public class CustomPushReceiver extends ParsePushBroadcastReceiver {
 
                 NotificationObject notif = new NotificationObject();
                 notif.setMessage(message);
-                notif.setTimestamp(getDateCustom());
+                notif.setTimestamp(getDateCustom() + "\n" + getTimeCustom());
 
                 controllerBD.saveNota(notif);
             }
@@ -113,6 +113,12 @@ public class CustomPushReceiver extends ParsePushBroadcastReceiver {
     private String getDateCustom() {
         //DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = new Date();
+        return dateFormat.format(date);
+    }
+
+    private String getTimeCustom() {
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm");
         Date date = new Date();
         return dateFormat.format(date);
     }
