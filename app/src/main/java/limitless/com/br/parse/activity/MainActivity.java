@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,12 +41,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         listView = (ListView) findViewById(R.id.list_view);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         adapter = new MessageAdapter(this);
         pref = new PrefManager(getApplicationContext());
@@ -65,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         String message = intent.getStringExtra("message");
-
+        Log.e(TAG, "MainActivity: " + message);
         Message m = new Message(message, System.currentTimeMillis());
         listMessages.add(0, m);
         adapter.notifyDataSetChanged();

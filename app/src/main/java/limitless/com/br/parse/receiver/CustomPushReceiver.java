@@ -9,7 +9,7 @@ import com.parse.ParsePushBroadcastReceiver;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import limitless.com.br.parse.activity.Login;
+import limitless.com.br.parse.activity.MainActivity;
 import limitless.com.br.parse.helper.NotificationUtils;
 
 /**
@@ -37,7 +37,7 @@ public class CustomPushReceiver extends ParsePushBroadcastReceiver {
         try {
             JSONObject json = new JSONObject(intent.getExtras().getString("com.parse.Data"));
 
-            Log.e(TAG, "Push received: " + json);
+            Log.e(TAG, "Push received json: " + json);
 
             parseIntent = intent;
 
@@ -65,19 +65,22 @@ public class CustomPushReceiver extends ParsePushBroadcastReceiver {
      * @param json
      */
     private void parsePushJson(Context context, JSONObject json) {
+        Log.e(TAG, "ENTROU NO METODO PARSE PUSH JSON :: " + json);
         try {
-            boolean isBackground = json.getBoolean("is_background");
             JSONObject data = json.getJSONObject("data");
             String title = data.getString("title");
             String message = data.getString("message");
+            boolean isBackground = json.getBoolean("is_background");
+
+            Log.e(TAG, " isBackground " + json.getBoolean("is_background"));
 
             if (!isBackground) {
-                Intent resultIntent = new Intent(context, Login.class);
+                Intent resultIntent = new Intent(context, MainActivity.class);
                 showNotificationMessage(context, title, message, resultIntent);
             }
 
         } catch (JSONException e) {
-            Log.e(TAG, "Push message json exception: " + e.getMessage());
+            Log.e(TAG, "Push message json exception parsePushJson: " + e.getMessage());
         }
     }
 
