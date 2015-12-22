@@ -45,7 +45,7 @@ public class CustomPushReceiver extends ParsePushBroadcastReceiver {
         try {
             JSONObject json = new JSONObject(intent.getExtras().getString("com.parse.Data"));
 
-            Log.e(TAG, "Push received json: " + json);
+            //Log.e(TAG, "Push received json: " + json);
 
             parseIntent = intent;
 
@@ -66,12 +66,6 @@ public class CustomPushReceiver extends ParsePushBroadcastReceiver {
         super.onPushOpen(context, intent);
     }
 
-    /**
-     * Parses the push notification json
-     *
-     * @param context
-     * @param json
-     */
     private void parsePushJson(Context context, JSONObject json) {
         controllerBD = new ControllerBD(context);
         try {
@@ -80,7 +74,7 @@ public class CustomPushReceiver extends ParsePushBroadcastReceiver {
             String message = data.getString("message");
             boolean isBackground = json.getBoolean("is_background");
 
-            Log.e(TAG, " isBackground " + json.getBoolean("is_background"));
+            //Log.e(TAG, " isBackground " + json.getBoolean("is_background"));
 
             if (!isBackground) {
                 Intent resultIntent = new Intent(context, MainActivity.class);

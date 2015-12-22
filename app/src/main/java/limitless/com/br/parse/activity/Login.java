@@ -64,7 +64,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
 
             finish();
         } else {
-            Toast.makeText(getApplicationContext(), "Please enter valid email address!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Informe um endereço de email válido!", Toast.LENGTH_LONG).show();
         }
     }
 
