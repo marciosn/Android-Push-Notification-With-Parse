@@ -36,7 +36,7 @@
             android:gravity="center_horizontal"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:text="Enter your email address to subscribe to parse channel!"
+            android:text="Informe seu email para receber notificações."
             android:textColor="#9d9d9d"
             android:textSize="16dp" />
 
@@ -47,7 +47,7 @@
             android:layout_marginLeft="40dp"
             android:layout_marginRight="40dp"
             android:background="@android:color/white"
-            android:hint="Your email address"
+            android:hint="Email address"
             android:gravity="center_horizontal"
             android:inputType="textEmailAddress"
             android:padding="10dp"

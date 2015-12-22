@@ -3,8 +3,11 @@ package limitless.com.br.parse.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -18,12 +21,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import limitless.com.br.parse.R;
+import limitless.com.br.parse.adapter.Adapter;
 import limitless.com.br.parse.helper.ParseUtils;
 import limitless.com.br.parse.helper.PrefManager;
 import limitless.com.br.parse.model.Message;
+import limitless.com.br.parse.model.NotificationObject;
+import limitless.com.br.parse.sqlite.ControllerBD;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,19 +42,40 @@ public class MainActivity extends AppCompatActivity {
     private MessageAdapter adapter;
     private PrefManager pref;
 
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter adapterNotification;
+    private RecyclerView.LayoutManager layoutManager;
+
+    private List<NotificationObject> notificationObjects = new ArrayList<NotificationObject>();
+
+    private ControllerBD controllerBD;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        listView = (ListView) findViewById(R.id.list_view);
 
+        controllerBD = new ControllerBD(this);
+
+        recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        recyclerView.setHasFixedSize(true);
+
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+        notificationObjects = getNotifications();
+
+        adapterNotification = new Adapter(notificationObjects);
+        recyclerView.setAdapter(adapterNotification);
+
+
+        /*listView = (ListView) findViewById(R.id.list_view);
         adapter = new MessageAdapter(this);
+        listView.setAdapter(adapter);*/
+
         pref = new PrefManager(getApplicationContext());
-
-        listView.setAdapter(adapter);
-
         Intent intent = getIntent();
 
         String email = intent.getStringExtra("email");
@@ -63,8 +91,10 @@ public class MainActivity extends AppCompatActivity {
         String message = intent.getStringExtra("message");
         Log.e(TAG, "MainActivity: " + message);
         Message m = new Message(message, System.currentTimeMillis());
-        listMessages.add(0, m);
-        adapter.notifyDataSetChanged();
+        CharSequence ago = DateUtils.getRelativeTimeSpanString(m.getTimestamp(), System.currentTimeMillis(), 0L, DateUtils.FORMAT_ABBREV_ALL);
+        //notificationObjects.add(0, new NotificationObject(null, m.getMessage(), String.valueOf(System.currentTimeMillis())));
+        notificationObjects.add(0, new NotificationObject(null, m.getMessage(), String.valueOf(ago)));
+        adapterNotification.notifyDataSetChanged();
     }
 
     private class MessageAdapter extends BaseAdapter {
@@ -133,5 +163,24 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private List<NotificationObject> getNotifications() {
+        List<NotificationObject> result = new ArrayList<>();
+
+        Cursor cursor = controllerBD.list();
+        if(cursor != null) {
+
+            cursor.moveToFirst();
+            while(!cursor.isAfterLast()){
+                NotificationObject notificationObject = controllerBD.cursorToOject(cursor);
+                result.add(notificationObject);
+                cursor.moveToNext();
+            }
+            cursor.close();
+            Collections.reverse(result);
+        }
+
+        return  result;
     }
 }

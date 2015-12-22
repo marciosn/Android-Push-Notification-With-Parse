@@ -9,8 +9,14 @@ import com.parse.ParsePushBroadcastReceiver;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import limitless.com.br.parse.activity.MainActivity;
 import limitless.com.br.parse.helper.NotificationUtils;
+import limitless.com.br.parse.model.NotificationObject;
+import limitless.com.br.parse.sqlite.ControllerBD;
 
 /**
  * Created by Márcio Sn on 22/12/2015.
@@ -22,6 +28,8 @@ public class CustomPushReceiver extends ParsePushBroadcastReceiver {
     private NotificationUtils notificationUtils;
 
     private Intent parseIntent;
+
+    private ControllerBD controllerBD;
 
     public CustomPushReceiver() {
         super();
@@ -65,7 +73,7 @@ public class CustomPushReceiver extends ParsePushBroadcastReceiver {
      * @param json
      */
     private void parsePushJson(Context context, JSONObject json) {
-        Log.e(TAG, "ENTROU NO METODO PARSE PUSH JSON :: " + json);
+        controllerBD = new ControllerBD(context);
         try {
             JSONObject data = json.getJSONObject("data");
             String title = data.getString("title");
@@ -77,6 +85,12 @@ public class CustomPushReceiver extends ParsePushBroadcastReceiver {
             if (!isBackground) {
                 Intent resultIntent = new Intent(context, MainActivity.class);
                 showNotificationMessage(context, title, message, resultIntent);
+
+                NotificationObject notif = new NotificationObject();
+                notif.setMessage(message);
+                notif.setTimestamp(getDateCustom());
+
+                controllerBD.saveNota(notif);
             }
 
         } catch (JSONException e) {
@@ -94,5 +108,12 @@ public class CustomPushReceiver extends ParsePushBroadcastReceiver {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         notificationUtils.showNotificationMessage(title, message, intent);
+    }
+
+    private String getDateCustom() {
+        //DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = new Date();
+        return dateFormat.format(date);
     }
 }
